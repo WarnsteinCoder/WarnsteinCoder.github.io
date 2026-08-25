@@ -1,16 +1,13 @@
 # Warnstein 技术档案
 
-这是 `warnsteincoder.github.io` 的个人技术博客。
-
-- 根路径是新的项目化首页：`index.html`
-- `/blog/` 由 VuePress 构建，继续承载原有技术文档
-- GitHub Actions 在每次推送到 `main` 后自动构建并发布 Pages
+这是 `warnsteincoder.github.io` 的纯静态技术博客，使用 HTML、CSS 和 JavaScript 编写，直接由 GitHub Pages 发布。
 
 ## 本地预览
 
-直接打开 `index.html` 即可查看首页。完整文档站使用：
+可以直接打开 `index.html`，或者运行：
 
 ```bash
-npm install
-npm run docs:dev
+npm run preview
 ```
+
+项目已经移除 VuePress 和 Theme Plume，不再包含旧模板文档站。
