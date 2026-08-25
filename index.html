@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Warnstein 的计算机技术博客：记录代码、系统、算法与正在发生的思考。" />
+    <meta name="theme-color" content="#111310" />
+    <title>WARNSTEIN / 技术档案</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="site-shell" id="top">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="回到首页">
+          <span class="brand-mark">W</span>
+          <span class="brand-copy">
+            <strong>WARNSTEIN</strong>
+            <small>build, learn, share</small>
+          </span>
+        </a>
+        <nav class="primary-nav" aria-label="主导航">
+          <a href="#projects">项目库</a>
+          <a href="#notes">技术笔记</a>
+          <a href="#about">关于我</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="切换主题" title="切换主题">
+            <span aria-hidden="true">☼</span>
+          </button>
+          <a class="github-link" href="https://github.com/warnsteincoder" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+          <button class="menu-button" id="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" title="打开菜单">☰</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero-section" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">computer science student / 2026</p>
+            <h1 id="hero-title">把问题拆开，<br /><em>把答案留下。</em></h1>
+            <p class="hero-intro">这里是 Warnstein 的技术档案。记录写过的代码、读过的论文、踩过的坑，以及还没有完全想明白的事情。</p>
+            <div class="hero-links">
+              <a class="text-link" href="#notes">阅读最新笔记 <span aria-hidden="true">↓</span></a>
+              <a class="text-link muted-link" href="#about">认识我 <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+          <div class="hero-aside">
+            <div class="terminal-card" aria-label="个人状态终端">
+              <div class="terminal-top"><span></span><span></span><span></span><small>~/warnstein</small></div>
+              <div class="terminal-body">
+                <p><span class="prompt">$</span> whoami</p>
+                <p class="terminal-output">computer science student</p>
+                <p><span class="prompt">$</span> cat current_focus.txt</p>
+                <p class="terminal-output">systems · llm · frontend</p>
+                <p><span class="prompt">$</span> <span class="cursor">_</span></p>
+              </div>
+            </div>
+            <div class="status-line"><span class="status-dot"></span>正在学习，也正在构建</div>
+          </div>
+        </section>
+
+        <section class="stats-row" aria-label="站点概况">
+          <div><strong>24</strong><span>篇技术笔记</span></div>
+          <div><strong>06</strong><span>个长期项目</span></div>
+          <div><strong>∞</strong><span>个待解决问题</span></div>
+        </section>
+
+        <section class="section-block" id="projects" aria-labelledby="projects-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-index">01 / project library</p>
+              <h2 id="projects-title">项目库</h2>
+            </div>
+            <p class="section-note">以项目为单位，整理学习过程中真正动手做过的东西。</p>
+          </div>
+          <div class="project-grid">
+            <a class="project-card project-card-featured" href="#notes" data-filter="系统设计">
+              <div class="project-meta"><span>ongoing</span><span>01</span></div>
+              <h3>从零实现一个小型数据库</h3>
+              <p>从 WAL、B+ 树到简单的查询执行器，边写边理解数据真正如何落在磁盘上。</p>
+              <div class="project-footer"><span>系统设计 · Rust</span><span aria-hidden="true">→</span></div>
+            </a>
+            <a class="project-card" href="#notes" data-filter="大模型">
+              <div class="project-meta"><span>reading</span><span>02</span></div>
+              <h3>大模型技术报告精读</h3>
+              <p>把论文里的结构、实验和结论拆开，留下可以复现和继续追问的笔记。</p>
+              <div class="project-footer"><span>论文阅读 · Python</span><span aria-hidden="true">→</span></div>
+            </a>
+            <a class="project-card" href="#notes" data-filter="前端工程">
+              <div class="project-meta"><span>shipping</span><span>03</span></div>
+              <h3>个人知识库工作台</h3>
+              <p>让文档不只是散落的 Markdown，而是能被检索、链接、回看和持续维护。</p>
+              <div class="project-footer"><span>前端工程 · TypeScript</span><span aria-hidden="true">→</span></div>
+            </a>
+          </div>
+        </section>
+
+        <section class="section-block notes-section" id="notes" aria-labelledby="notes-title">
+          <div class="section-heading notes-heading">
+            <div>
+              <p class="section-index">02 / technical notes</p>
+              <h2 id="notes-title">技术笔记</h2>
+            </div>
+            <div class="notes-tools">
+              <label class="search-box">
+                <span aria-hidden="true">⌕</span>
+                <input id="search-input" type="search" placeholder="搜索标题、标签或关键词" aria-label="搜索技术笔记" />
+              </label>
+              <span class="result-count" id="result-count">显示 06 篇</span>
+            </div>
+          </div>
+          <div class="filter-row" aria-label="笔记筛选">
+            <button class="filter-button is-active" type="button" data-tag="全部">全部</button>
+            <button class="filter-button" type="button" data-tag="系统设计">系统设计</button>
+            <button class="filter-button" type="button" data-tag="大模型">大模型</button>
+            <button class="filter-button" type="button" data-tag="前端工程">前端工程</button>
+            <button class="filter-button" type="button" data-tag="算法基础">算法基础</button>
+          </div>
+          <div class="notes-list" id="notes-list">
+            <article class="note-item" data-tags="系统设计 Rust 数据库" data-title="为什么我要从 WAL 开始写数据库">
+              <div class="note-date">2026.08.18</div>
+              <div class="note-main"><h3><a href="#article-wal">为什么我要从 WAL 开始写数据库</a></h3><p>从一次崩溃恢复的想象出发，理解 write-ahead logging 到底解决了什么。</p></div>
+              <div class="note-tag">系统设计</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+            <article class="note-item" data-tags="大模型 Python Transformer" data-title="Transformer 的注意力到底在计算什么">
+              <div class="note-date">2026.08.11</div>
+              <div class="note-main"><h3><a href="#article-attention">Transformer 的注意力到底在计算什么</a></h3><p>不从公式背诵开始，尝试用矩阵形状和一个最小例子重新走一遍。</p></div>
+              <div class="note-tag">大模型</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+            <article class="note-item" data-tags="前端工程 TypeScript 性能" data-title="把一个静态页面做得更快需要多少工作">
+              <div class="note-date">2026.08.03</div>
+              <div class="note-main"><h3><a href="#article-web">把一个静态页面做得更快，需要多少工作</a></h3><p>从资源体积、渲染路径和交互反馈三个角度记一次性能排查。</p></div>
+              <div class="note-tag">前端工程</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+            <article class="note-item" data-tags="算法基础 C++ 图论" data-title="Dijkstra 不是最短路的全部答案">
+              <div class="note-date">2026.07.27</div>
+              <div class="note-main"><h3><a href="#article-graph">Dijkstra 不是最短路的全部答案</a></h3><p>当边出现负权、图变得稠密，算法选择也要跟着问题改变。</p></div>
+              <div class="note-tag">算法基础</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+            <article class="note-item" data-tags="系统设计 Linux C" data-title="一次系统调用从用户态走到内核态">
+              <div class="note-date">2026.07.15</div>
+              <div class="note-main"><h3><a href="#article-syscall">一次系统调用，如何从用户态走到内核态</a></h3><p>用 read() 作为切口，把上下文切换、寄存器和返回路径串起来。</p></div>
+              <div class="note-tag">系统设计</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+            <article class="note-item" data-tags="大模型 机器学习 Python" data-title="训练日志里最值得看的五个信号">
+              <div class="note-date">2026.07.06</div>
+              <div class="note-main"><h3><a href="#article-training">训练日志里，最值得看的五个信号</a></h3><p>loss 之外，梯度、吞吐、显存和评估曲线能告诉我们更多。</p></div>
+              <div class="note-tag">大模型</div><span class="note-arrow" aria-hidden="true">↗</span>
+            </article>
+          </div>
+          <p class="empty-state" id="empty-state" hidden>没有找到匹配的笔记。换个关键词试试。</p>
+        </section>
+
+        <section class="article-preview" id="article-wal" aria-labelledby="article-title">
+          <div class="article-label"><span class="section-index">03 / latest deep dive</span><span>阅读时间 · 8 min</span></div>
+          <div class="article-layout">
+            <div><p class="article-kicker">SYSTEM DESIGN / DATABASE</p><h2 id="article-title">为什么我要从 WAL 开始写数据库</h2></div>
+            <div class="article-content"><p>数据库最迷人的地方，是它把很多抽象承诺都落到了非常具体的字节上：写入顺序、页的布局、崩溃后的重放。</p><p>这篇笔记从一个很小的实现开始，记录我如何理解 WAL，以及为什么“先写日志，再写数据”是一条值得反复体会的工程经验。</p><a class="text-link" href="#notes">返回笔记列表 <span aria-hidden="true">↑</span></a></div>
+          </div>
+        </section>
+
+        <section class="about-section" id="about" aria-labelledby="about-title">
+          <div><p class="section-index">04 / about the author</p><h2 id="about-title">保持好奇，<br /><em>保持动手。</em></h2></div>
+          <div class="about-copy"><p>你好，我是 Warnstein，一名计算机专业学生。喜欢把遇到的东西做成小项目，也喜欢在写完之后回头解释自己到底做了什么。</p><p>这个博客会持续记录系统、算法、大模型、前端工程，以及学生生活里那些和技术有关的细节。</p><div class="about-links"><a href="https://github.com/warnsteincoder" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a><a href="mailto:hello@warnsteincoder.dev">Email <span aria-hidden="true">↗</span></a></div></div>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>© 2026 Warnstein</span><span>built with markdown, curiosity, and time.</span><a href="#top">回到顶部 ↑</a></footer>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
