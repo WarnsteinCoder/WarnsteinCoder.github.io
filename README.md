@@ -1,13 +1,16 @@
 # Warnstein 技术档案
 
-一个面向 GitHub Pages 的静态技术博客首页，记录项目、技术笔记和学习过程。
+这是 `warnsteincoder.github.io` 的个人技术博客。
+
+- 根路径是新的项目化首页：`index.html`
+- `/blog/` 由 VuePress 构建，继续承载原有技术文档
+- GitHub Actions 在每次推送到 `main` 后自动构建并发布 Pages
 
 ## 本地预览
 
-直接打开 `index.html` 即可预览，也可以使用任意静态文件服务器运行。
+直接打开 `index.html` 即可查看首页。完整文档站使用：
 
-## GitHub Pages
-
-仓库使用用户站点地址：`https://warnsteincoder.github.io`。
-
-将本目录推送到 `warnsteincoder/warnsteincoder.github.io` 仓库的 `main` 分支，并在仓库设置中将 Pages 来源设为 `main` 分支根目录即可。
+```bash
+npm install
+npm run docs:dev
+```

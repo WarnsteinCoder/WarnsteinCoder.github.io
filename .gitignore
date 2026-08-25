@@ -1,0 +1,11 @@
+**/node_modules
+
+docs/.vuepress/.cache
+docs/.vuepress/.temp
+docs/.vuepress/dist
+
+remote-main
+remote-main.zip
+
+.DS_Store
+*.log
