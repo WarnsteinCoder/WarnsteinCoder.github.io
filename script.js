@@ -8,22 +8,56 @@ const emptyState = document.querySelector('#empty-state');
 const noteItems = [...document.querySelectorAll('.note-item')];
 const filterButtons = [...document.querySelectorAll('.filter-button')];
 
-const savedTheme = localStorage.getItem('warnstein-theme');
-if (savedTheme === 'light') body.classList.add('is-light');
+const savedTheme = localStorage.getItem('warnstein-theme-v2');
+if (savedTheme === 'dark') body.classList.add('is-dark');
 
 function updateThemeIcon() {
-  const isLight = body.classList.contains('is-light');
-  themeToggle.querySelector('span').textContent = isLight ? '☾' : '☼';
-  themeToggle.setAttribute('aria-label', isLight ? '切换为深色主题' : '切换为浅色主题');
-  themeToggle.title = isLight ? '切换为深色主题' : '切换为浅色主题';
+  const isDark = body.classList.contains('is-dark');
+  themeToggle.querySelector('span').textContent = isDark ? '☾' : '☼';
+  themeToggle.setAttribute('aria-label', isDark ? '切换为浅色主题' : '切换为深色主题');
+  themeToggle.title = isDark ? '切换为浅色主题' : '切换为深色主题';
 }
 
 themeToggle.addEventListener('click', () => {
-  body.classList.toggle('is-light');
-  localStorage.setItem('warnstein-theme', body.classList.contains('is-light') ? 'light' : 'dark');
+  body.classList.toggle('is-dark');
+  localStorage.setItem('warnstein-theme-v2', body.classList.contains('is-dark') ? 'dark' : 'light');
   updateThemeIcon();
 });
 updateThemeIcon();
+
+function copyText(text) {
+  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  document.body.appendChild(helper);
+  helper.select();
+  document.execCommand('copy');
+  helper.remove();
+  return Promise.resolve();
+}
+
+document.querySelectorAll('.copy-code').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const code = button.closest('.code-block')?.querySelector('code');
+    if (!code) return;
+    try {
+      await copyText(code.textContent || '');
+      const originalLabel = button.textContent;
+      button.textContent = '已复制';
+      button.classList.add('is-copied');
+      window.setTimeout(() => {
+        button.textContent = originalLabel;
+        button.classList.remove('is-copied');
+      }, 1400);
+    } catch {
+      button.textContent = '复制失败';
+      window.setTimeout(() => { button.textContent = '复制'; }, 1400);
+    }
+  });
+});
 
 if (menuToggle && nav) {
   menuToggle.addEventListener('click', () => {

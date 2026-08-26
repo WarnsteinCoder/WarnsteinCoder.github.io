@@ -19,11 +19,21 @@ draft: false
 ---
 ~~~
 
-正文可以直接用 Typora 编辑，支持标题、粗体、斜体、链接、图片、引用、有序列表、无序列表、表格、任务列表、代码高亮、行内公式、独立公式和脚注。
+正文可以直接用 Typora 编辑，支持标题、粗体、斜体、链接、图片、引用、有序列表、无序列表、表格、任务列表、代码高亮、代码复制、行内公式、独立公式、脚注和 Obsidian 风格 Callout。
 
 行内公式写成 `$E = mc^2$`，独立公式使用一对 `$$` 包围。`draft: true` 的文章不会发布。
 
 图片可以放在 `content/assets/`，构建后会复制到 `/assets/`；例如在文章中写 `![架构图](/assets/architecture.png)`。
+
+Callout 写法如下，类型支持 `note`、`abstract`、`info`、`todo`、`tip`、`success`、`question`、`warning`、`failure`、`danger`、`bug`、`example`、`quote`，也兼容 `summary`、`tldr`、`help`、`faq`、`attention`、`caution`、`fail`、`missing`、`error`、`cite` 等别名：
+
+~~~markdown
+> [!warning] 注意事项
+> 这里写提示内容，可以继续使用 Markdown。
+
+> [!tip]- 可折叠提示
+> 在类型后加 `-` 默认折叠，加 `+` 默认展开。
+~~~
 
 ## 本地构建和预览
 

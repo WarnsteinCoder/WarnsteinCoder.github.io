@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
@@ -12,6 +13,11 @@ const root = process.cwd();
 const contentDir = path.join(root, 'content', 'posts');
 const distDir = path.join(root, 'dist');
 const siteUrl = 'https://warnsteincoder.github.io';
+const assetVersion = crypto.createHash('sha256')
+  .update(fs.readFileSync(path.join(root, 'styles.css')))
+  .update(fs.readFileSync(path.join(root, 'script.js')))
+  .digest('hex')
+  .slice(0, 8);
 
 const escapeHtml = (value = '') => String(value)
   .replaceAll('&', '&amp;')
@@ -31,6 +37,69 @@ const formatDate = (value) => {
   return raw.replaceAll('-', '.') || '未设置日期';
 };
 const readingTime = (text) => Math.max(1, Math.ceil(text.replace(/\s/g, '').length / 360));
+
+const calloutTypes = {
+  note: { label: '提示', icon: 'N' },
+  abstract: { label: '摘要', icon: 'A' },
+  info: { label: '信息', icon: 'i' },
+  todo: { label: '待办', icon: 'T' },
+  tip: { label: '技巧', icon: '•' },
+  success: { label: '成功', icon: '+' },
+  question: { label: '问题', icon: '?' },
+  warning: { label: '警告', icon: '!' },
+  failure: { label: '失败', icon: '×' },
+  danger: { label: '危险', icon: '!' },
+  bug: { label: 'Bug', icon: 'B' },
+  example: { label: '示例', icon: 'E' },
+  quote: { label: '引用', icon: '“' },
+};
+
+const calloutAliases = {
+  summary: 'abstract',
+  tldr: 'abstract',
+  help: 'question',
+  faq: 'question',
+  attention: 'warning',
+  caution: 'warning',
+  fail: 'failure',
+  missing: 'failure',
+  error: 'danger',
+  cite: 'quote',
+};
+
+function normalizeCalloutType(value) {
+  const key = String(value || '').toLowerCase();
+  return calloutTypes[key] ? key : calloutAliases[key] || 'note';
+}
+
+function calloutBlock(state, startLine, endLine, silent) {
+  const start = state.bMarks[startLine] + state.tShift[startLine];
+  const firstLine = state.src.slice(start, state.eMarks[startLine]).trim();
+  const match = firstLine.match(/^>\s*\[!([\w-]+)\]\s*([+-]?)(?:\s+(.*))?$/);
+  if (!match) return false;
+  let nextLine = startLine + 1;
+  const bodyLines = [];
+  while (nextLine < endLine) {
+    const lineStart = state.bMarks[nextLine] + state.tShift[nextLine];
+    const rawLine = state.src.slice(lineStart, state.eMarks[nextLine]);
+    if (!/^>\s?/.test(rawLine)) break;
+    bodyLines.push(rawLine.replace(/^>\s?/, ''));
+    nextLine += 1;
+  }
+  if (silent) return true;
+  const token = state.push('callout', 'div', 0);
+  token.block = true;
+  token.content = bodyLines.join('\n');
+  token.meta = {
+    type: normalizeCalloutType(match[1]),
+    title: match[3] || '',
+    collapsible: Boolean(match[2]),
+    collapsed: match[2] === '-',
+  };
+  token.map = [startLine, nextLine];
+  state.line = nextLine;
+  return true;
+}
 
 function mathBlock(state, startLine, endLine, silent) {
   const start = state.bMarks[startLine] + state.tShift[startLine];
@@ -70,10 +139,9 @@ const markdown = new MarkdownIt({
   typographer: true,
   highlight(code, language) {
     if (language && hljs.getLanguage(language)) {
-      const highlighted = hljs.highlight(code, { language, ignoreIllegals: true }).value;
-      return `<pre class="hljs"><code>${highlighted}</code></pre>`;
+      return hljs.highlight(code, { language, ignoreIllegals: true }).value;
     }
-    return `<pre class="hljs"><code>${escapeHtml(code)}</code></pre>`;
+    return escapeHtml(code);
   },
 })
   .use(anchor, { slugify })
@@ -81,9 +149,31 @@ const markdown = new MarkdownIt({
   .use(taskLists, { enabled: true, label: true, labelAfter: true });
 
 markdown.block.ruler.before('fence', 'math_block', mathBlock, { alt: ['paragraph', 'reference', 'blockquote', 'list'] });
+markdown.block.ruler.before('blockquote', 'callout', calloutBlock, { alt: ['paragraph', 'reference', 'blockquote', 'list'] });
 markdown.inline.ruler.before('escape', 'math_inline', mathInline);
 markdown.renderer.rules.math_block = (tokens, index) => `<div class="math-block">${katex.renderToString(tokens[index].content, { displayMode: true, throwOnError: false })}</div>`;
 markdown.renderer.rules.math_inline = (tokens, index) => katex.renderToString(tokens[index].content, { throwOnError: false });
+markdown.renderer.rules.fence = (tokens, index) => {
+  const token = tokens[index];
+  const language = (token.info || '').trim().split(/\s+/)[0].toLowerCase();
+  const label = language || 'text';
+  const highlighted = language && hljs.getLanguage(language)
+    ? hljs.highlight(token.content, { language, ignoreIllegals: true }).value
+    : escapeHtml(token.content);
+  return `<div class="code-block" data-language="${escapeHtml(label)}"><div class="code-toolbar"><span class="code-language">${escapeHtml(label)}</span><button class="copy-code" type="button">复制</button></div><pre class="hljs"><code>${highlighted}</code></pre></div>`;
+};
+markdown.renderer.rules.callout = (tokens, index) => {
+  const token = tokens[index];
+  const meta = token.meta;
+  const config = calloutTypes[meta.type];
+  const title = meta.title || config.label;
+  const content = markdown.render(token.content);
+  const titleBar = `<span class="callout-icon" aria-hidden="true">${config.icon}</span><strong>${escapeHtml(title)}</strong>`;
+  if (meta.collapsible) {
+    return `<details class="callout" data-callout="${meta.type}"${meta.collapsed ? '' : ' open'}><summary class="callout-title">${titleBar}</summary><div class="callout-content">${content}</div></details>`;
+  }
+  return `<aside class="callout" data-callout="${meta.type}"><div class="callout-title">${titleBar}</div><div class="callout-content">${content}</div></aside>`;
+};
 
 function readPosts() {
   if (!fs.existsSync(contentDir)) return [];
@@ -135,7 +225,7 @@ function renderLatest(post) {
 }
 
 function pageShell({ title, description, body, article = false }) {
-  return `<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="${escapeHtml(description)}" /><meta name="theme-color" content="#111310" /><title>${escapeHtml(title)} · WARNSTEIN</title><link rel="stylesheet" href="/styles.css" />${article ? '<link rel="stylesheet" href="/vendor/katex/katex.min.css" />' : ''}</head><body${article ? ' class="article-page"' : ''}><div class="site-shell" id="top"><header class="site-header"><a class="brand" href="/" aria-label="回到首页"><span class="brand-mark">W</span><span class="brand-copy"><strong>WARNSTEIN</strong><small>build, learn, share</small></span></a><nav class="primary-nav" aria-label="主导航"><a href="/#projects">项目库</a><a href="/#notes">技术笔记</a><a href="/#about">关于我</a></nav><div class="header-actions"><button class="icon-button" id="theme-toggle" type="button" aria-label="切换主题" title="切换主题"><span aria-hidden="true">☼</span></button><a class="github-link" href="https://github.com/warnsteincoder" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a><button class="menu-button" id="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" title="打开菜单">☰</button></div></header><main>${body}</main><footer class="site-footer"><span>© 2026 Warnstein</span><span>built with markdown, curiosity, and time.</span><a href="#top">回到顶部 ↑</a></footer></div><script src="/script.js"></script></body></html>`;
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="${escapeHtml(description)}" /><meta name="theme-color" content="#f1f3ec" /><title>${escapeHtml(title)} · WARNSTEIN</title><link rel="stylesheet" href="/styles.css?v=${assetVersion}" />${article ? '<link rel="stylesheet" href="/vendor/katex/katex.min.css" />' : ''}</head><body${article ? ' class="article-page"' : ''}><div class="site-shell" id="top"><header class="site-header"><a class="brand" href="/" aria-label="回到首页"><span class="brand-mark">W</span><span class="brand-copy"><strong>WARNSTEIN</strong><small>build, learn, share</small></span></a><nav class="primary-nav" aria-label="主导航"><a href="/#projects">项目库</a><a href="/#notes">技术笔记</a><a href="/#about">关于我</a></nav><div class="header-actions"><button class="icon-button" id="theme-toggle" type="button" aria-label="切换主题" title="切换主题"><span aria-hidden="true">☼</span></button><a class="github-link" href="https://github.com/warnsteincoder" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a><button class="menu-button" id="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" title="打开菜单">☰</button></div></header><main>${body}</main><footer class="site-footer"><span>© 2026 Warnstein</span><span>built with markdown, curiosity, and time.</span><a href="#top">回到顶部 ↑</a></footer></div><script src="/script.js?v=${assetVersion}"></script></body></html>`;
 }
 
 function renderArticle(post) {
@@ -159,6 +249,7 @@ function build() {
   const assetsDir = path.join(root, 'content', 'assets');
   if (fs.existsSync(assetsDir)) fs.cpSync(assetsDir, path.join(distDir, 'assets'), { recursive: true });
   let home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  home = home.replace('href="styles.css"', `href="styles.css?v=${assetVersion}"`).replace('src="script.js"', `src="script.js?v=${assetVersion}"`);
   home = home.replace('data-post-count>00', `data-post-count>${String(posts.length).padStart(2, '0')}`).replace('显示 00 篇', `显示 ${String(posts.length).padStart(2, '0')} 篇`);
   home = replaceSection(home, '<!-- POSTS_START -->', '<!-- POSTS_END -->', posts.length ? posts.map(renderNote).join('\n') : '<p class="empty-state">还没有发布文章。在 content/posts/ 中添加 Markdown 文件。</p>');
   home = replaceSection(home, '<!-- FILTERS_START -->', '<!-- FILTERS_END -->', renderFilters(posts));

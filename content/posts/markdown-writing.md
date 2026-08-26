@@ -60,6 +60,19 @@ fn main() {
 - [x] 提交到 GitHub
 - [ ] 持续补充自己的推导
 
+## Callout 提示块
+
+Callout 使用 Obsidian 风格的引用语法。类型可以写 `note`、`abstract`、`info`、`todo`、`tip`、`success`、`question`、`warning`、`failure`、`danger`、`bug`、`example` 或 `quote`。
+
+> [!note] 写作提示
+> 一篇文章只保留真正有帮助的提示，避免把正文切得太碎。
+
+> [!tip]- 可折叠的技巧
+> 在类型后加 `-` 默认折叠，加 `+` 默认展开。
+
+> [!warning] 发布前检查
+> 确认公式、代码语言和图片路径都能在构建后的文章页正常显示。
+
 脚注也可以使用[^note]，适合放置不打断正文的补充说明。
 
 [^note]: 这是 markdown-it-footnote 提供的脚注语法。
