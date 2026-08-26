@@ -44,19 +44,19 @@ if (nav && menuToggle) {
 let activeTag = '全部';
 
 function filterNotes() {
-  if (!searchInput) return;
-  const query = searchInput.value.trim().toLowerCase();
+  const query = searchInput?.value.trim().toLowerCase() || '';
   let visible = 0;
   noteItems.forEach((item) => {
-    const matchesTag = activeTag === '全部' || item.dataset.tags.includes(activeTag);
-    const searchable = `${item.dataset.search || ''} ${item.dataset.title} ${item.dataset.tags} ${item.innerText}`.toLowerCase();
+    const tags = (item.dataset.tags || '').split(/\s+/).filter(Boolean);
+    const matchesTag = activeTag === '全部' || tags.includes(activeTag);
+    const searchable = `${item.dataset.search || ''} ${item.dataset.title || ''} ${item.dataset.tags || ''} ${item.innerText}`.toLowerCase();
     const matchesQuery = !query || searchable.includes(query);
     const shouldShow = matchesTag && matchesQuery;
     item.hidden = !shouldShow;
     if (shouldShow) visible += 1;
   });
-  resultCount.textContent = `显示 ${String(visible).padStart(2, '0')} 篇`;
-  emptyState.hidden = visible !== 0;
+  if (resultCount) resultCount.textContent = `显示 ${String(visible).padStart(2, '0')} 篇`;
+  if (emptyState) emptyState.hidden = visible !== 0;
 }
 
 filterButtons.forEach((button) => button.addEventListener('click', () => {
@@ -65,6 +65,7 @@ filterButtons.forEach((button) => button.addEventListener('click', () => {
   filterNotes();
 }));
 if (searchInput) searchInput.addEventListener('input', filterNotes);
+filterNotes();
 
 document.querySelectorAll('[data-filter]').forEach((card) => card.addEventListener('click', () => {
   const tag = card.dataset.filter;
